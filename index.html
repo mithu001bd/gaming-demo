@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEXUS ODDS â€” Live Gaming & Match Odds | Mithun Rahman</title>
+<meta name="description" content="Ultra-sleek live esports & sports odds demo by Mithun Rahman." />
+<script src="https://cdn.tailwindcss.com"></script><script>
+tailwind.config={theme:{extend:{fontFamily:{display:['Orbitron','sans-serif'],body:['Rajdhani','sans-serif']},colors:{void:'#060913',panel:'#0b1120',neon:'#00ff88',volt:'#a855f7',cyber:'#00e5ff'},boxShadow:{neon:'0 0 20px rgba(0,255,136,.35)',volt:'0 0 20px rgba(168,85,247,.45)',card:'0 20px 60px -15px rgba(0,0,0,.7)'},animation:{'pulse-dot':'pulseDot 1.6s ease-in-out infinite',marquee:'marquee 28s linear infinite',float:'float 6s ease-in-out infinite'},keyframes:{pulseDot:{'0%,100%':{opacity:'1',transform:'scale(1)',boxShadow:'0 0 0 0 rgba(0,255,136,.7)'},'50%':{opacity:'.85',transform:'scale(1.1)',boxShadow:'0 0 0 10px rgba(0,255,136,0)'}},marquee:{'0%':{transform:'translateX(0)'},'100%':{transform:'translateX(-50%)'}},float:{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-12px)'}}}}}}};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<style>
+body{background:#060913}
+.bg-grid{background-image:linear-gradient(rgba(0,255,136,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.06) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,black 60%,transparent 100%)}
+.glass{background:rgba(11,17,32,.74);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.text-stroke{-webkit-text-stroke:1px rgba(0,255,136,.5);color:transparent}
+.neon-text{text-shadow:0 0 12px rgba(0,255,136,.8),0 0 40px rgba(0,255,136,.35)}
+.volt-text{text-shadow:0 0 12px rgba(168,85,247,.8)}
+.btn-glow{box-shadow:0 0 18px rgba(0,255,136,.5),inset 0 0 12px rgba(0,255,136,.2);transition:.25s}
+.btn-glow:hover{box-shadow:0 0 32px rgba(0,255,136,.75);transform:translateY(-1px)}
+.odds-btn{transition:all .22s ease;position:relative;overflow:hidden}
+.odds-btn:hover{transform:translateY(-2px)}
+.odds-btn.active{background:linear-gradient(135deg,#00ff88,#00cc6a)!important;color:#04120a!important;border-color:#00ff88!important;box-shadow:0 0 22px rgba(0,255,136,.6)}
+.odds-btn.active div,.odds-btn.active span{color:#04120a!important}
+.flash-up{animation:flashUp .8s ease}.flash-down{animation:flashDown .8s ease}
+@keyframes flashUp{0%{background:rgba(0,255,136,.45)}100%{background:transparent}}
+@keyframes flashDown{0%{background:rgba(255,60,90,.45)}100%{background:transparent}}
+.type-caret{display:inline-block;width:3px;height:1.15em;background:#00ff88;margin-left:4px;vertical-align:text-bottom;box-shadow:0 0 10px #00ff88;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.marquee-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.scroll-slim::-webkit-scrollbar{width:6px;height:6px}
+.scroll-slim::-webkit-scrollbar-thumb{background:linear-gradient(#00ff88,#a855f7);border-radius:99px}
+.scroll-slim::-webkit-scrollbar-track{background:rgba(255,255,255,.05)}
+.live-bar{background:linear-gradient(90deg,#00ff88,#00e5ff,#a855f7,#00ff88);background-size:300% 100%;animation:glowPan 5s linear infinite}
+@keyframes glowPan{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.card-hover{transition:.3s cubic-bezier(.2,.8,.2,1)}
+.card-hover:hover{transform:translateY(-4px);border-color:rgba(0,255,136,.5)!important;box-shadow:0 24px 60px -18px rgba(0,255,136,.25)}
+.tab-active{background:linear-gradient(135deg,#00ff88,#00e5ff)!important;color:#04120a!important;box-shadow:0 0 22px rgba(0,255,136,.5);border-color:transparent!important}
+.radar{background:conic-gradient(from 0deg,rgba(0,255,136,.35),transparent 22%,transparent 100%);animation:spin 4s linear infinite}
+.drawer{transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+</style>
+</head>
+<body class="font-body text-slate-200 antialiased overflow-x-hidden" x-data="nexusApp()" x-init="init()" @keydown.escape.window="slipOpen=false;depositOpen=false">
+<div class="fixed inset-0 -z-10 pointer-events-none">
+<div class="absolute inset-0 bg-grid"></div>
+<div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full blur-[140px] opacity-30" style="background:radial-gradient(circle,#00ff88 0%,#00e5ff 30%,#a855f7 60%,transparent 70%)"></div>
+<div class="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 bg-purple-600"></div>
+<div class="absolute bottom-0 -right-40 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 bg-emerald-500"></div>
+</div>
+<header class="sticky top-0 z-50">
+<div class="relative border-b border-emerald-400/40 bg-gradient-to-r from-[#04120d] via-[#071a24] to-[#150a2e]/95 glass">
+<div class="absolute inset-x-0 top-0 h-[2px] live-bar"></div>
+<div class="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent"></div>
+<div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-col md:flex-row items-center gap-2 md:gap-6 justify-between">
+<div class="flex items-center gap-3 min-w-0 w-full md:w-auto">
+<span class="shrink-0 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/40 text-[11px] font-display font-bold tracking-[0.18em] text-emerald-300">
+<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="animate-pulse-dot relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00ff88]"></span></span>
+LIVE&nbsp;DEMO</span>
+<p class="truncate text-[12.5px] sm:text-[13.5px] text-slate-300/95 font-medium tracking-wide min-h-[20px]"><span id="typewriter" class="text-emerald-200"></span><span class="type-caret"></span></p>
+</div>
+<a href="https://mithu001bd.github.io/" target="_blank" rel="noopener" class="btn-glow shrink-0 inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-300 text-[#04120a] text-[12.5px] sm:text-[13px] font-display font-bold tracking-wide border border-emerald-200/60">View Main Portfolio <span class="text-base leading-none">&#8599;</span></a>
+</div>
+</div>
+<nav class="glass border-b border-white/10">
+<div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-3">
+<a href="#" class="flex items-center gap-3 group">
+<div class="w-10 h-10 rounded-xl grid place-items-center font-display font-black text-lg text-black bg-gradient-to-br from-[#00ff88] via-[#00e5ff] to-[#a855f7] shadow-neon group-hover:rotate-6 transition">N</div>
+<div class="leading-none"><div class="font-display font-extrabold tracking-widest text-white text-[15px]">NEXUS<span class="text-[#00ff88] neon-text">//</span>ODDS</div><div class="text-[10.5px] tracking-[0.28em] text-slate-400 font-semibold">LIVE BETTING ARENA</div></div>
+</a>
+<div class="hidden lg:flex items-center gap-7 text-[13.5px] font-semibold tracking-widest text-slate-300">
+<a href="#live" class="hover:text-emerald-300 transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>LIVE NOW</a>
+<a href="#matches" class="hover:text-emerald-300 transition">MATCHES</a>
+<a href="#slip-section" class="hover:text-emerald-300 transition">BET SLIP</a>
+<a href="https://mithu001bd.github.io/" target="_blank" class="hover:text-emerald-300 transition text-slate-400">BY MITHUN &#8599;</a>
+</div>
+<div class="flex items-center gap-2">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
+<span class="text-lg">$</span>
+<div class="leading-none"><div class="text-[10px] tracking-widest text-slate-400 font-bold">BALANCE</div><div class="font-display font-bold text-emerald-300" x-text="'$'+balance.toLocaleString('en-US',{minimumFractionDigits:2})">$4,250.00</div></div>
+<button @click="depositOpen=true" class="ml-1 w-7 h-7 rounded-lg bg-emerald-400 text-black font-black hover:scale-110 transition shadow-neon">+</button>
+</div>
+<button @click="depositOpen=true" class="sm:hidden w-9 h-9 grid place-items-center rounded-xl bg-white/5 border border-white/10 text-lg">$</button>
+<button @click="slipOpen=true" class="relative inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl font-display font-bold text-[12.5px] tracking-wider bg-gradient-to-r from-violet-600 to-fuchsia-600 border border-fuchsia-400/40 shadow-volt hover:scale-[1.03] transition text-white">BET SLIP<span class="absolute -top-2 -right-2 min-w-[22px] h-[22px] px-1 grid place-items-center rounded-full bg-[#00ff88] text-black text-[11px] font-black border-2 border-[#060913]" x-text="slip.length" x-show="slip.length>0">0</span></button>
+</div>
+</div>
+<div class="sm:hidden px-3 pb-2 flex items-center justify-between text-[12px]"><span class="text-slate-400 tracking-widest font-bold">BALANCE: <span class="text-emerald-300 font-display" x-text="'$'+balance.toFixed(2)"></span></span><button @click="depositOpen=true" class="text-emerald-300 font-bold tracking-widest">+ DEPOSIT</button></div>
+</nav>
+</header>
+
+<div class="border-b border-white/10 bg-black/50 overflow-hidden"><div class="marquee-track py-2 text-[12.5px] font-semibold"><template x-for="i in 2" :key="i"><div class="flex shrink-0"><template x-for="m in matches" :key="i+'-'+m.id"><span class="mx-5 flex items-center gap-2 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-slate-400" x-text="m.league"></span><span class="text-white font-bold" x-text="m.home+' '+m.scoreH+'-'+m.scoreA+' '+m.away"></span><span class="text-emerald-300 font-display" x-text="m.odds.home.toFixed(2)+' / '+m.odds.away.toFixed(2)"></span></span></template></div></template></div></div>
+<main class="max-w-7xl mx-auto px-3 sm:px-6 pb-24">
+<section id="live" class="pt-8 lg:pt-12 grid lg:grid-cols-[1.15fr_.85fr] gap-6 items-stretch">
+<div class="relative overflow-hidden rounded-3xl border border-emerald-400/25 bg-gradient-to-br from-[#0b1a2b]/90 via-[#0b1120]/90 to-[#1a0b2e]/90 p-6 sm:p-10 shadow-card">
+<div class="absolute inset-0 bg-grid opacity-70"></div>
+<div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-emerald-400/20 blur-[90px]"></div>
+<div class="relative">
+
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-fuchsia-400/40 bg-fuchsia-500/10 text-[11px] font-display tracking-[0.22em] text-fuchsia-300 font-bold">SEASON 07 â€” GRAND CIRCUIT <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span x-text="liveCount+' LIVE'"></span></div>
+<h1 class="mt-4 font-display font-black leading-[1.02] text-4xl sm:text-6xl text-white">BET ON THE<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff88] via-[#00e5ff] to-[#a855f7]">NEON ARENA.</span><br><span class="text-stroke">WIN IN REAL-TIME.</span></h1>
+<p class="mt-4 max-w-xl text-slate-300/90 text-[15px] leading-relaxed">Ultra-low-latency simulated odds engine by <a href="https://mithu001bd.github.io/" target="_blank" class="text-emerald-300 font-bold underline underline-offset-4">Mithun Rahman</a>. Laravel-grade real-time architecture and instant slip settlement.</p>
+<div class="mt-6 flex flex-wrap gap-3"><a href="#matches" class="btn-glow px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-300 text-black font-display font-extrabold text-[13px] tracking-widest">BET LIVE NOW</a><button @click="depositOpen=true" class="px-6 py-3 rounded-2xl border border-white/15 bg-white/5 hover:border-emerald-400/50 transition font-display font-bold text-[13px] tracking-widest text-white">+ QUICK DEPOSIT</button></div>
+
+<div class="mt-8 grid grid-cols-3 max-w-lg gap-3">
+<div class="rounded-2xl border border-white/10 bg-black/40 p-3 text-center"><div class="font-display font-extrabold text-xl sm:text-2xl text-emerald-300 neon-text" x-text="liveCount+' LIVE'"></div><div class="text-[10.5px] tracking-[0.2em] text-slate-400 font-bold">MATCHES</div></div>
+<div class="rounded-2xl border border-white/10 bg-black/40 p-3 text-center"><div class="font-display font-extrabold text-xl sm:text-2xl text-cyan-300" x-text="totalViewers"></div><div class="text-[10.5px] tracking-[0.2em] text-slate-400 font-bold">WATCHING</div></div>
+<div class="rounded-2xl border border-white/10 bg-black/40 p-3 text-center"><div class="font-display font-extrabold text-xl sm:text-2xl text-fuchsia-300 volt-text" x-text="settledVolumeFmt"></div><div class="text-[10.5px] tracking-[0.2em] text-slate-400 font-bold">VOLUME</div></div>
+</div>
+</div>
+</div>
+
+<div class="relative overflow-hidden rounded-3xl border border-fuchsia-500/30 bg-[#0b1120]/90 shadow-card flex flex-col">
+<div class="px-5 pt-5 flex items-center justify-between"><span class="text-rose-300 text-[11px] font-bold">FEATURED - LIVE</span><span class="text-[11px] text-slate-400" x-text="featured.viewers"></span></div>
+<div class="px-5 mt-3 flex items-center justify-between gap-2">
+<div class="text-center flex-1"><div class="mx-auto w-14 h-14 rounded-2xl grid place-items-center text-2xl bg-emerald-400/10 border border-emerald-400/40" x-text="featured.logoH"></div><div class="mt-2 font-display font-bold text-white text-[13px]" x-text="featured.home"></div></div>
+<div class="text-center px-2"><div class="font-display font-black text-4xl text-white"><span x-text="featured.scoreH"></span><span class="text-slate-500 mx-1">:</span><span x-text="featured.scoreA"></span></div><div class="text-[11px] tracking-[0.25em] text-emerald-300 font-bold">MAP 3 â€¢ BO5</div>
+<div class="relative mx-auto mt-2 w-20 h-20 rounded-full border border-emerald-400/30 overflow-hidden bg-black/60"><div class="absolute inset-0 radar opacity-70"></div><div class="absolute top-1/2 left-1/2 w-1.5 h-1.5 -ml-[3px] -mt-[3px] rounded-full bg-emerald-400 shadow-neon"></div></div></div>
+<div class="text-center flex-1"><div class="mx-auto w-14 h-14 rounded-2xl grid place-items-center text-2xl bg-fuchsia-500/10 border border-fuchsia-400/40" x-text="featured.logoA"></div><div class="mt-2 font-display font-bold text-white text-[13px]" x-text="featured.away"></div></div>
+</div>
+<div class="px-5 mt-4"><div class="flex justify-between text-[10.5px] font-bold tracking-widest text-slate-400 mb-1.5"><span>MOMENTUM</span><span class="text-emerald-300" x-text="featured.momentum+'% pressure'"></span></div><div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-fuchsia-500 transition-all duration-1000" :style="'width:'+featured.momentum+'%'"></div></div></div>
+
+<div class="p-5 grid grid-cols-2 gap-2 mt-1"><button @click="togglePick(featured.id,0,featured.odds.home)" :class="isPicked(featured.id,0) && 'active'" class="odds-btn rounded-xl border border-white/10 bg-white/5 py-2.5 text-center"><div class="text-[10px] text-slate-400 font-bold">1 - HOME</div><div class="font-display font-extrabold text-emerald-300" x-text="featured.odds.home.toFixed(2)"></div></button><button @click="togglePick(featured.id,1,featured.odds.away)" :class="isPicked(featured.id,1) && 'active'" class="odds-btn rounded-xl border border-white/10 bg-white/5 py-2.5 text-center"><div class="text-[10px] text-slate-400 font-bold">2 - AWAY</div><div class="font-display font-extrabold text-fuchsia-300" x-text="featured.odds.away.toFixed(2)"></div></button></div><button @click="slipOpen=true" class="mx-5 mb-5 py-3 rounded-2xl font-display font-extrabold tracking-widest text-[12.5px] bg-gradient-to-r from-emerald-400 to-cyan-300 text-black btn-glow">OPEN BET SLIP</button></div></section>
+<section id="matches" class="mt-10"><div class="flex flex-col xl:flex-row xl:items-center gap-3 justify-between"><div class="flex flex-wrap gap-2" role="tablist"><template x-for="c in categories" :key="c"><button @click="activeTab=c" :class="activeTab===c ? 'tab-active' : 'bg-white/5 text-slate-200 border-white/10'" class="px-4 py-2.5 rounded-2xl border text-[12.5px] font-display font-bold tracking-widest bg-white/5 text-slate-200 border-white/10"><span x-text="c"></span> <span x-text="countBy(c)"></span></button></template></div><div class="flex gap-2"><input x-model="search" placeholder="Search teams..." class="flex-1 px-4 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[13px]" /><select x-model="sortBy" class="px-3 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[13px]"><option value="live">Live first</option><option value="odds">Best odds</option><option value="viewers">Most watched</option></select></div></div>
+
+<div class="mt-5 grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+<template x-for="m in filteredMatches" :key="m.id">
+<article class="card-hover relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[.06] to-black/40 glass p-5">
+<div class="absolute top-0 left-0 right-0 h-[2px]" :class="m.live ? 'live-bar' : 'bg-white/10'"></div>
+<div class="flex items-center justify-between gap-2">
+<span class="text-[10.5px] font-display font-bold tracking-[0.18em] text-slate-400 truncate" x-text="m.league.toUpperCase()"></span>
+<span class="shrink-0 text-[10px] font-display font-bold tracking-widest px-2 py-1 rounded-full border" :class="m.live ? 'border-rose-500/50 bg-rose-500/10 text-rose-300' : 'border-cyan-400/40 bg-cyan-400/10 text-cyan-300'"><span x-text="m.live ? 'LIVE' : 'UPCOMING'"></span> <span x-show="m.live" x-text="'• '+m.minute"></span><span x-show="!m.live" x-text="'• '+m.startsIn"></span></span>
+</div>
+<div class="mt-4 space-y-3">
+<div class="flex items-center justify-between gap-2"><div class="flex items-center gap-3 min-w-0"><div class="w-11 h-11 rounded-2xl grid place-items-center text-xl border border-white/15 bg-black/50" x-text="m.logoH"></div><div class="min-w-0"><div class="font-display font-bold text-white text-[14px] truncate" x-text="m.home"></div><div class="text-[11px] text-slate-400 font-semibold" x-text="m.formH"></div></div></div><div class="font-display font-black text-2xl text-white" x-text="m.scoreH"></div></div>
+<div class="flex items-center justify-between gap-2"><div class="flex items-center gap-3 min-w-0"><div class="w-11 h-11 rounded-2xl grid place-items-center text-xl border border-white/15 bg-black/50" x-text="m.logoA"></div><div class="min-w-0"><div class="font-display font-bold text-white text-[14px] truncate" x-text="m.away"></div><div class="text-[11px] text-slate-400 font-semibold" x-text="m.formA"></div></div></div><div class="font-display font-black text-2xl text-slate-300" x-text="m.scoreA"></div></div>
+</div>
+<div class="mt-3 flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400"><span>VIEW <span x-text="m.viewers"></span></span><span class="text-emerald-300" x-text="m.momentum+'% MOM'"></span></div>
+<div class="mt-1.5 h-1.5 rounded-full bg-white/10 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-fuchsia-500 transition-all duration-1000" :style="'width:'+m.momentum+'%'"></div></div>
+
+<div class="mt-4 grid gap-2" :class="m.odds.draw ? 'grid-cols-3' : 'grid-cols-2'">
+<button @click="togglePick(m.id,0,m.odds.home)" :data-flash="m.id" :class="isPicked(m.id,0) && 'active'" class="odds-btn rounded-2xl border border-white/10 bg-black/50 px-2 py-2.5 text-center"><div class="text-[10px] font-bold tracking-widest text-slate-400">1</div><div class="font-display font-extrabold text-[16px] text-emerald-300" x-text="m.odds.home.toFixed(2)"></div><div class="text-[9.5px] font-bold" :class="m.trend.home>0 ? 'text-emerald-400' : m.trend.home<0 ? 'text-rose-400' : 'text-slate-500'" x-text="m.trend.home>0 ? 'UP' : m.trend.home<0 ? 'DOWN' : 'STEADY'"></div></button>
+<button x-show="m.odds.draw" @click="togglePick(m.id,2,m.odds.draw)" :class="isPicked(m.id,2) && 'active'" class="odds-btn rounded-2xl border border-white/10 bg-black/50 px-2 py-2.5 text-center"><div class="text-[10px] font-bold tracking-widest text-slate-400">X</div><div class="font-display font-extrabold text-[16px] text-slate-100" x-text="m.odds.draw ? m.odds.draw.toFixed(2) : ''"></div><div class="text-[9.5px] font-bold text-slate-500">DRAW</div></button>
+<button @click="togglePick(m.id,1,m.odds.away)" :class="isPicked(m.id,1) && 'active'" class="odds-btn rounded-2xl border border-white/10 bg-black/50 px-2 py-2.5 text-center"><div class="text-[10px] font-bold tracking-widest text-slate-400">2</div><div class="font-display font-extrabold text-[16px] text-fuchsia-300" x-text="m.odds.away.toFixed(2)"></div><div class="text-[9.5px] font-bold" :class="m.trend.away>0 ? 'text-emerald-400' : m.trend.away<0 ? 'text-rose-400' : 'text-slate-500'" x-text="m.trend.away>0 ? 'UP' : m.trend.away<0 ? 'DOWN' : 'STEADY'"></div></button>
+</div>
+<div class="mt-3 flex items-center justify-between text-[11px]"><span class="text-slate-500 font-semibold">Tap odds to add to slip</span><span class="font-display font-bold text-cyan-300" x-text="m.bestOf"></span></div>
+</article>
+</template>
+</div>
+<div x-show="filteredMatches.length===0" class="mt-6 rounded-3xl border border-dashed border-white/15 p-10 text-center text-slate-400">No matches found.</div>
+</section>
+<section id="slip-section" class="mt-10 grid lg:grid-cols-3 gap-4">
+<div class="lg:col-span-2 rounded-3xl border border-white/10 glass p-5 sm:p-6">
+<div class="flex items-center justify-between"><h2 class="font-display font-extrabold tracking-widest text-white text-[15px]">MY BET HISTORY</h2><span class="text-[11px] font-bold tracking-widest text-slate-400" x-text="myBets.length+' TICKETS'"></span></div>
+<div x-show="myBets.length===0" class="mt-4 rounded-2xl border border-dashed border-white/15 p-6 text-center text-slate-500 text-[13.5px]">No bets yet — pick any live odds to start.</div>
+<div class="mt-4 space-y-2 max-h-64 overflow-y-auto scroll-slim pr-1"><template x-for="b in myBets" :key="b.code"><div class="flex items-center justify-between gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-400/5 px-4 py-3"><div class="min-w-0"><div class="font-display font-bold text-[12.5px] text-white" x-text="b.code+' • '+b.mode.toUpperCase()"></div><div class="text-[12px] text-slate-400 truncate" x-text="b.label"></div></div><div class="text-right shrink-0"><div class="font-display font-extrabold text-emerald-300" x-text="'$'+b.toWin.toFixed(2)"></div><div class="text-[10.5px] text-slate-500 font-bold" x-text="'STAKE $'+b.stake.toFixed(2)"></div></div></div></template></div>
+</div>
+<div class="rounded-3xl overflow-hidden border border-fuchsia-500/25 bg-gradient-to-br from-[#150a2e] to-[#071a24] p-6 relative">
+<h3 class="font-display font-extrabold text-white tracking-widest text-[14px]">CRAFTED BY MITHUN RAHMAN</h3>
+<p class="mt-2 text-[13.5px] text-slate-300">Full-Stack Developer and UI/UX Designer. High-performance Laravel, WebSockets and real-time engines.</p>
+<div class="mt-3 flex flex-wrap gap-2 text-[10.5px] font-bold tracking-widest"><span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-emerald-300">LARAVEL</span><span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-cyan-300">WEBSOCKETS</span><span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-fuchsia-300">UI/UX</span></div>
+<a href="https://mithu001bd.github.io/" target="_blank" class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-black font-display font-extrabold text-[12px] tracking-widest">VIEW MAIN PORTFOLIO</a>
+<p class="mt-2 text-[11px] text-slate-500">Available for freelance and full-time remote roles.</p>
+</div>
+</section>
+<footer class="mt-10 text-center text-[12px] text-slate-500 tracking-wider"><div class="h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent mb-5"></div>NEXUS ODDS — simulated demo. No real money. Crafted by <a class="text-emerald-300 font-bold" href="https://mithu001bd.github.io/" target="_blank">Mithun Rahman</a> 2026</footer>
+</main>
+
+<div x-show="slipOpen" x-transition.opacity class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm" @click="slipOpen=false"></div>
+<aside class="drawer fixed top-0 right-0 z-[70] h-full w-full sm:w-[420px] glass border-l border-emerald-400/25 flex flex-col" :class="slipOpen ? 'translate-x-0' : 'translate-x-full'">
+<div class="h-[3px] live-bar"></div>
+<div class="p-5 flex items-center justify-between border-b border-white/10"><div><h2 class="font-display font-extrabold text-white tracking-widest">BET SLIP <span class="ml-1 px-2 py-0.5 rounded-full bg-emerald-400 text-black text-[11px]" x-text="slip.length"></span></h2><p class="text-[11.5px] text-slate-400">Balance: <span class="text-emerald-300 font-bold font-display" x-text="'$'+balance.toFixed(2)"></span></p></div><button @click="slipOpen=false" class="w-9 h-9 grid place-items-center rounded-xl bg-white/5 border border-white/10">X</button></div>
+<div class="p-4 grid grid-cols-2 gap-2">
+<button @click="betMode='single'" :class="betMode==='single' ? 'bg-emerald-400 text-black shadow-neon' : 'bg-white/5 text-slate-300 border border-white/10'" class="py-2.5 rounded-2xl font-display font-extrabold text-[12px] tracking-widest">SINGLES</button>
+<button @click="betMode='parlay'" :class="betMode==='parlay' ? 'bg-fuchsia-600 text-white shadow-volt' : 'bg-white/5 text-slate-300 border border-white/10'" class="py-2.5 rounded-2xl font-display font-extrabold text-[12px] tracking-widest">PARLAY <span x-text="'x'+totalOdds.toFixed(2)"></span></button>
+</div>
+<div class="flex-1 overflow-y-auto scroll-slim px-4 space-y-2.5 pb-3">
+<div x-show="slip.length===0" class="rounded-2xl border border-dashed border-white/15 p-8 text-center"><div class="text-4xl">T</div><p class="mt-2 text-slate-300 font-bold">Slip is empty</p><p class="text-[12.5px] text-slate-500">Tap any odds button to add a pick.</p><button @click="slipOpen=false" class="mt-3 text-emerald-300 text-[12.5px] font-bold">BROWSE MATCHES</button></div>
+<template x-for="(s,i) in slip" :key="s.key"><div class="rounded-2xl border border-white/10 bg-black/40 p-3.5 flex gap-3 items-start"><div class="w-9 h-9 rounded-xl grid place-items-center text-lg bg-white/5 border border-white/10" x-text="s.logo"></div><div class="flex-1 min-w-0"><div class="text-[11px] font-bold tracking-widest text-slate-400 truncate" x-text="s.league"></div><div class="text-[13px] font-bold text-white" x-text="s.matchLabel"></div><div class="mt-1 flex items-center gap-2 text-[12px]"><span class="px-2 py-0.5 rounded-lg bg-emerald-400/15 border border-emerald-400/40 text-emerald-300 font-display font-bold" x-text="s.pickLabel"></span><span class="font-display font-extrabold text-white" x-text="'@ '+s.odd.toFixed(2)"></span></div></div><button @click="removePick(i)" class="w-7 h-7 grid place-items-center rounded-lg bg-white/5 border border-white/10 text-slate-400">X</button></div></template>
+<button x-show="slip.length>0" @click="clearSlip()" class="w-full text-center text-[11.5px] font-bold tracking-widest text-slate-500 py-1">CLEAR ALL</button>
+</div>
+<div class="p-4 border-t border-white/10 bg-black/50 space-y-3">
+<div><div class="flex justify-between text-[11px] font-bold tracking-widest text-slate-400 mb-1.5"><span>STAKE</span><span class="text-emerald-300">MAX $5,000</span></div>
+<div class="flex gap-2"><div class="relative flex-1"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span><input type="number" min="1" max="5000" x-model.number="stake" class="w-full pl-7 pr-3 py-3 rounded-2xl bg-white/5 border border-white/10 font-display font-bold text-white" /></div><button @click="stake=25" class="px-3 rounded-2xl bg-white/5 border border-white/10 text-[12px] font-bold">$25</button><button @click="stake=50" class="px-3 rounded-2xl bg-white/5 border border-white/10 text-[12px] font-bold">$50</button><button @click="stake=100" class="px-3 rounded-2xl bg-white/5 border border-white/10 text-[12px] font-bold">$100</button></div>
+<input type="range" min="5" max="500" step="5" x-model.number="stake" class="w-full mt-2 accent-emerald-400" /></div>
+<div class="rounded-2xl border border-white/10 bg-white/[.03] p-3.5 space-y-1.5 text-[13px] font-semibold"><div class="flex justify-between text-slate-400"><span>Total odds</span><span class="font-display text-white" x-text="'x'+totalOdds.toFixed(2)"></span></div><div class="flex justify-between text-slate-400"><span>Total stake</span><span class="font-display text-white" x-text="'$'+requiredStake.toFixed(2)"></span></div><div class="flex justify-between items-center pt-1.5 border-t border-white/10"><span class="text-[11px] text-slate-400 font-bold">POTENTIAL WIN</span><span class="font-display font-black text-xl text-emerald-300 neon-text" x-text="'$'+potentialWin.toFixed(2)"></span></div></div>
+<button @click="placeBet()" :disabled="slip.length===0" :class="slip.length===0 ? 'opacity-40' : 'btn-glow'" class="w-full py-3.5 rounded-2xl font-display font-black tracking-[0.18em] text-[13px] bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300 text-black">PLACE BET <span x-text="'$'+requiredStake.toFixed(2)"></span></button>
+<button @click="depositOpen=true" class="w-full py-2.5 rounded-2xl border border-white/10 bg-white/5 text-[12px] font-bold tracking-widest text-slate-300">+ DEPOSIT FUNDS</button>
+</div>
+</aside>
+
+<div x-show="depositOpen" x-transition.opacity class="fixed inset-0 z-[80] grid place-items-center p-4 bg-black/70 backdrop-blur-sm" @click.self="depositOpen=false">
+<div x-show="depositOpen" class="w-full max-w-md rounded-3xl border border-emerald-400/30 glass p-6 relative overflow-hidden">
+<div class="absolute inset-x-0 top-0 h-[3px] live-bar"></div>
+<div class="flex items-start justify-between"><div><h3 class="font-display font-extrabold text-white tracking-widest text-[16px]">QUICK DEPOSIT</h3><p class="text-[12.5px] text-slate-400">Mock wallet top-up, instant credit</p></div><button @click="depositOpen=false" class="w-9 h-9 grid place-items-center rounded-xl bg-white/5 border border-white/10">X</button></div>
+<div class="mt-4 rounded-2xl border border-white/10 bg-black/40 p-4 flex items-center justify-between"><span class="text-[11px] font-bold tracking-widest text-slate-400">CURRENT BALANCE</span><span class="font-display font-black text-xl text-emerald-300" x-text="'$'+balance.toFixed(2)"></span></div>
+<div class="mt-4 grid grid-cols-4 gap-2"><template x-for="a in [50,100,500,1000]" :key="a"><button @click="depositAmount=a" :class="depositAmount===a ? 'bg-emerald-400 text-black shadow-neon border-transparent' : 'bg-white/5 text-slate-200 border-white/10'" class="py-3 rounded-2xl border font-display font-extrabold text-[13px]" x-text="'$'+a"></button></template></div>
+<div class="mt-3 relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span><input type="number" min="1" max="50000" x-model.number="depositAmount" class="w-full pl-8 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 font-display font-bold text-white text-lg" /></div>
+<button @click="confirmDeposit()" class="btn-glow mt-4 w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-300 text-black font-display font-black tracking-[0.18em] text-[13px]">CONFIRM DEPOSIT <span x-text="'$'+(depositAmount||0).toFixed(2)"></span></button>
+<p class="mt-2.5 text-center text-[11px] text-slate-500">Demo only — no real payment.</p>
+</div>
+</div>
+<div class="fixed bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-5 z-[90] flex flex-col gap-2 w-[calc(100%-2rem)] sm:w-96">
+<template x-for="t in toasts" :key="t.id"><div class="glass border rounded-2xl px-4 py-3 flex items-start gap-3 shadow-card" :class="t.type==='success' ? 'border-emerald-400/50' : t.type==='error' ? 'border-rose-500/50' : 'border-cyan-400/40'"><div class="min-w-0"><div class="font-display font-bold text-[12.5px] text-white" x-text="t.title"></div><div class="text-[12.5px] text-slate-300" x-text="t.msg"></div></div></div></template>
+</div>
+<button x-show="!slipOpen && slip.length>0" @click="slipOpen=true" class="sm:hidden fixed bottom-4 inset-x-4 z-[55] py-3.5 rounded-2xl font-display font-black tracking-widest text-[13px] bg-gradient-to-r from-emerald-400 to-cyan-300 text-black shadow-neon">VIEW SLIP (<span x-text="slip.length"></span>) <span x-text="'$'+potentialWin.toFixed(2)"></span></button>
+
+<script>
+(function(){
+var lines=["Crafted by Mithun Rahman — Full-Stack Web Developer and UI/UX Designer","Specialized in High-Performance Laravel, WebSockets and Real-Time Engines","Available for Freelance Projects and Full-Time Remote Roles"];
+var el=document.getElementById("typewriter");var li=0,ci=0,del=false;
+function paint(){if(el)el.textContent=lines[li].slice(0,ci);}
+function tick(){var full=lines[li];ci+=del?-2:1;if(ci<=0){ci=0;del=false;li=(li+1)%lines.length;}if(ci>=full.length){ci=full.length;del=true;paint();setTimeout(tick,2200);return;}paint();setTimeout(tick,del?22:42);}
+tick();
+})();
+function nexusApp(){
+var base=[
+{id:"m1",league:"Premier League - England",category:"Football",home:"Arsenal Neon",away:"Chelsea Volt",logoH:"A",logoA:"C",scoreH:2,scoreA:1,minute:67,live:true,startsIn:"",viewers:"84.2K",viewersN:84200,momentum:64,bestOf:"FT",formH:"W W D W W",formA:"W L W D W",odds:{home:2.10,draw:3.40,away:3.10},trend:{home:0,draw:0,away:0}},
+{id:"m2",league:"IEM Katowice - CS:GO Major",category:"CS:GO",home:"NAVI Junior",away:"FaZe Neon",logoH:"N",logoA:"F",scoreH:1,scoreA:1,minute:24,live:true,startsIn:"",viewers:"112K",viewersN:112000,momentum:52,bestOf:"BO5",formH:"W W W L W",formA:"W W L W W",odds:{home:1.85,draw:null,away:2.05},trend:{home:0,draw:0,away:0}},
+{id:"m3",league:"The International - Dota 2",category:"Dota 2",home:"Team Spirit X",away:"Liquid Pulse",logoH:"S",logoA:"L",scoreH:1,scoreA:0,minute:34,live:true,startsIn:"",viewers:"96.5K",viewersN:96500,momentum:71,bestOf:"BO3",formH:"W W W W D",formA:"L W W W W",odds:{home:1.72,draw:null,away:2.20},trend:{home:0,draw:0,away:0}},
+{id:"m4",league:"NBA - Eastern Clash",category:"Basketball",home:"Lakers Prime",away:"Celtics Cyber",logoH:"L",logoA:"B",scoreH:88,scoreA:84,minute:32,live:true,startsIn:"",viewers:"61.3K",viewersN:61300,momentum:58,bestOf:"Q3",formH:"W L W W L",formA:"W W L W W",odds:{home:1.65,draw:null,away:2.35},trend:{home:0,draw:0,away:0}},
+{id:"m5",league:"La Liga - Spain",category:"Football",home:"Real Madrid RG",away:"Girona Flux",logoH:"R",logoA:"G",scoreH:0,scoreA:0,minute:0,live:false,startsIn:"Today 21:00",viewers:"45.1K",viewersN:45100,momentum:50,bestOf:"UP",formH:"W W W D W",formA:"D W L W D",odds:{home:1.44,draw:4.60,away:6.50},trend:{home:0,draw:0,away:0}}];
+
+var more=[
+{id:"m6",league:"BLAST Premier - CS:GO",category:"CS:GO",home:"Vitality Hex",away:"G2 Phantom",logoH:"V",logoA:"G",scoreH:0,scoreA:0,minute:0,live:false,startsIn:"Tomorrow 18:30",viewers:"38.9K",viewersN:38900,momentum:50,bestOf:"BO3",formH:"W L W W W",formA:"W W L W L",odds:{home:2.40,draw:null,away:1.58},trend:{home:0,draw:0,away:0}},
+{id:"m7",league:"ESL One - Dota 2",category:"Dota 2",home:"OG Neon",away:"Tundra Void",logoH:"O",logoA:"T",scoreH:0,scoreA:0,minute:0,live:false,startsIn:"Sat 16:00",viewers:"29.4K",viewersN:29400,momentum:50,bestOf:"BO3",formH:"L W D W W",formA:"W W W L W",odds:{home:2.90,draw:null,away:1.42},trend:{home:0,draw:0,away:0}},
+{id:"m8",league:"EuroLeague - Basketball",category:"Basketball",home:"Fener Neon",away:"Real Madrid BC",logoH:"F",logoA:"M",scoreH:54,scoreA:57,minute:22,live:true,startsIn:"",viewers:"22.7K",viewersN:22700,momentum:44,bestOf:"Q2",formH:"W W L W W",formA:"W W W W W",odds:{home:2.55,draw:null,away:1.52},trend:{home:0,draw:0,away:0}},
+{id:"m9",league:"Serie A - Italy",category:"Football",home:"Inter Pulse",away:"Napoli Waves",logoH:"I",logoA:"N",scoreH:1,scoreA:1,minute:78,live:true,startsIn:"",viewers:"53.8K",viewersN:53800,momentum:47,bestOf:"2H",formH:"D W W W D",formA:"W D L W W",odds:{home:2.75,draw:3.10,away:2.60},trend:{home:0,draw:0,away:0}}
+];
+
+return{categories:["All","Football","CS:GO","Dota 2","Basketball"],matches:base.concat(more),activeTab:"All",search:"",sortBy:"live",slip:[],betMode:"single",stake:50,balance:4250.00,depositOpen:false,depositAmount:100,slipOpen:false,myBets:[],toasts:[],toastId:0,settledVolume:86240,
+featured:{id:"m2",home:"NAVI Junior",away:"FaZe Neon",logoH:"N",logoA:"F",scoreH:1,scoreA:1,minute:24,viewers:"112K",momentum:52,odds:{home:1.85,draw:null,away:2.05}},
+get liveCount(){return this.matches.filter(function(m){return m.live;}).length;},
+get totalViewers(){var n=this.matches.reduce(function(a,m){return a+m.viewersN;},0);return Math.round(n/1000)+"K";},
+get settledVolumeFmt(){return "$"+Math.round(this.settledVolume/1000)+"K";},
+get filteredMatches(){var self=this;var list=this.matches.filter(function(m){var ok=(self.activeTab==="All"||m.category===self.activeTab);var q=(m.home+" "+m.away+" "+m.league).toLowerCase();return ok&&q.indexOf(self.search.toLowerCase())>=0;});if(self.sortBy==="odds"){list=list.slice().sort(function(a,b){return Math.min(b.odds.home,b.odds.away)-Math.min(a.odds.home,a.odds.away);});}if(self.sortBy==="viewers"){list=list.slice().sort(function(a,b){return b.viewersN-a.viewersN;});}if(self.sortBy==="live"){list=list.slice().sort(function(a,b){return (b.live?1:0)-(a.live?1:0);});}return list;},
+get totalOdds(){if(!this.slip.length)return 0;return this.slip.reduce(function(a,s){return a*s.odd;},1);},
+get requiredStake(){return this.betMode==="single"?this.stake*this.slip.length:this.stake;},
+get potentialWin(){if(!this.slip.length||!this.stake)return 0;if(this.betMode==="parlay")return this.stake*this.totalOdds;var t=this;return this.slip.reduce(function(a,s){return a+t.stake*s.odd;},0);},
+
+countBy:function(c){if(c==="All")return this.matches.length;return this.matches.filter(function(m){return m.category===c;}).length;},
+shortName:function(n){return String(n).split(" ")[0];},
+isPicked:function(id,pick){return this.slip.some(function(s){return s.matchId===id&&s.pick===pick;});},
+togglePick:function(id,pick,odd){if(!odd)return;var m=null;for(var k=0;k<this.matches.length;k++){if(this.matches[k].id===id)m=this.matches[k];}if(!m)return;var key=id+"-"+pick;var ex=-1,sm=-1;for(var j=0;j<this.slip.length;j++){if(this.slip[j].key===key)ex=j;if(this.slip[j].matchId===id)sm=j;}
+if(ex>=0){this.slip.splice(ex,1);this.toast("Removed","Pick removed from slip.","info");return;}
+var label=pick===0?m.home+" WIN":pick===1?m.away+" WIN":"DRAW";
+var entry={key:key,matchId:id,pick:pick,odd:odd,league:m.league,matchLabel:m.home+" vs "+m.away,pickLabel:label,logo:pick===0?m.logoH:m.logoA};
+if(sm>=0)this.slip.splice(sm,1,entry);else this.slip.push(entry);
+this.toast("Added to slip",entry.matchLabel+" - "+label+" @ "+odd.toFixed(2),"success");
+if(window.innerWidth>=640)this.slipOpen=true;},
+removePick:function(i){this.slip.splice(i,1);},
+clearSlip:function(){this.slip=[];},
+placeBet:function(){if(!this.slip.length)return;if(!(this.stake>0)){this.toast("Invalid stake","Enter a stake above $0.","error");return;}if(this.requiredStake>this.balance){this.toast("Insufficient balance","Need $"+this.requiredStake.toFixed(2)+". Top up first.","error");this.depositOpen=true;return;}
+this.balance-=this.requiredStake;var code="NXS-"+Math.random().toString(36).slice(2,7).toUpperCase();
+var lbl=this.slip.map(function(s){return s.pickLabel+" @"+s.odd.toFixed(2);}).join(" | ");
+var avg=this.potentialWin/Math.max(1,this.requiredStake);
+this.myBets.unshift({code:code,mode:this.betMode,label:lbl,stake:this.requiredStake,odds:this.betMode==="parlay"?this.totalOdds:avg,toWin:this.potentialWin});
+this.settledVolume+=this.requiredStake;this.toast("Bet placed",code+" - win $"+this.potentialWin.toFixed(2),"success");this.slip=[];this.slipOpen=false;},
+confirmDeposit:function(){var amt=Number(this.depositAmount);if(!(amt>0)){this.toast("Invalid amount","Enter an amount above $0.","error");return;}this.balance+=amt;this.depositOpen=false;this.toast("Deposit ok","$"+amt.toFixed(2)+" added. Balance $"+this.balance.toFixed(2),"success");this.depositAmount=100;},
+toast:function(title,msg,type){var id=++this.toastId;this.toasts.push({id:id,title:title,msg:msg,type:type||"info"});var self=this;setTimeout(function(){self.toasts=self.toasts.filter(function(t){return t.id!==id;});},3400);},
+
+flash:function(id,dir){var el=document.querySelector("[data-flash='"+id+"']");if(!el)return;el.classList.remove("flash-up","flash-down");void el.offsetWidth;el.classList.add(dir>0?"flash-up":"flash-down");},
+tickOdds:function(){var self=this;this.matches.forEach(function(m){var keys=["home","draw","away"];keys.forEach(function(k){if(m.odds[k]==null)return;if(Math.random()<0.45){var d=(Math.random()-0.48)*0.14;var nx=Math.max(1.12,+(m.odds[k]+d).toFixed(2));var dir=nx>m.odds[k]?1:nx<m.odds[k]?-1:0;m.trend[k]=dir;m.odds[k]=nx;if(dir!==0)self.flash(m.id,dir);for(var j=0;j<self.slip.length;j++){if(self.slip[j].matchId===m.id&&self.slip[j].pick===(k==="home"?0:k==="away"?1:2))self.slip[j].odd=nx;}}else{m.trend[k]=0;}});m.momentum=Math.min(88,Math.max(12,m.momentum+Math.round((Math.random()-0.5)*10)));m.viewersN+=Math.round((Math.random()-0.35)*900);m.viewers=m.viewersN>=1000?(m.viewersN/1000).toFixed(1)+"K":""+Math.round(m.viewersN);
+if(m.live&&m.category==="Football"){if(Math.random()<0.05){if(Math.random()>0.5)m.scoreH++;else m.scoreA++;self.toast("GOAL",m.home+" "+m.scoreH+"-"+m.scoreA+" "+m.away,"info");}if(m.minute<90)m.minute++;}
+if(m.id===self.featured.id){self.featured.scoreH=m.scoreH;self.featured.scoreA=m.scoreA;self.featured.minute=m.minute;self.featured.viewers=m.viewers;self.featured.momentum=m.momentum;self.featured.odds.home=m.odds.home;self.featured.odds.away=m.odds.away;}});},
+init:function(){var self=this;setInterval(function(){self.tickOdds();},2500);setTimeout(function(){self.toast("Welcome","Live odds engine online. By Mithun Rahman.","info");},800);}
+};
+}
+</script>
+</body>
+</html>
